@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Esri Viewer CSS -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Esri 3D Risk Viewer - 4.4</title>
+    <style>
+        html,
+        body,
+        #map {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+        #menu {
+            background-color: #ffffff;
+            padding: 20px;
+        }
+        #message {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+    <link rel="stylesheet" href="//js.arcgis.com/4.7/esri/css/main.css">
+    <script src="//js.arcgis.com/4.7/"></script>
+    <script>
+        // Add Main ArcGIS Core Elements
+        require([
+            "esri/Map",
+            "esri/views/SceneView",
+            "esri/layers/SceneLayer",
+            "esri/layers/TileLayer",
+            "esri/layers/GroupLayer",
+            "esri/renderers/SimpleRenderer",
+            "esri/symbols/MeshSymbol3D",
+            "esri/widgets/BasemapToggle",
+            "dojo/html",
+            "dojo/dom",
+            "dojo/on",
+            "dojo/domReady!DC3DRisk"
+        ], function (
+            Map,
+            SceneView,
+            SceneLayer,
+            TileLayer,
+            GroupLayer,
+            SimpleRenderer,
+            MeshSymbol3D,
+            BasemapToggle,
+            html,
+            dom,
+            on
+        ) {
+            // Create the SceneView and Map
+            var view = new SceneView({
+                container: "map",
+                map: new Map({
+                    basemap: "dark-gray",
+                    ground: "world-elevation",
+                    layers: [
+                        new SceneLayer({
+                            id: "buildings",
+                            url: "https://tiles.arcgis.com/tiles/Imiq6naek6ZWdour/arcgis/rest/services/DC_Buildings_3D_SLR/SceneServer"
+                        }),
+                        new GroupLayer({
+                            id: "coast",
+                            layers: ["http://tiles.arcgis.com/tiles/C8EMgrsFcRFL6LrL/arcgis/rest/services/slr_0ft/MapServer",
+                                "http://tiles.arcgis.com/tiles/C8EMgrsFcRFL6LrL/arcgis/rest/services/slr_1ft/MapServer",
+                                "http://tiles.arcgis.com/tiles/C8EMgrsFcRFL6LrL/arcgis/rest/services/slr_2ft/MapServer",
+                                "http://tiles.arcgis.com/tiles/C8EMgrsFcRFL6LrL/arcgis/rest/services/slr_3ft/MapServer",
+                                "http://tiles.arcgis.com/tiles/C8EMgrsFcRFL6LrL/arcgis/rest/services/slr_4ft/MapServer",
+                                "http://tiles.arcgis.com/tiles/C8EMgrsFcRFL6LrL/arcgis/rest/services/slr_5ft/MapServer",
+                                "http://tiles.arcgis.com/tiles/C8EMgrsFcRFL6LrL/arcgis/rest/services/slr_6ft/MapServer"].map(function (e) {
+                                return new TileLayer({
+                                    url: e,
+                                    opacity: 0
+                                })
+                            })
+                        })
+                    ]
+                })
+            });
+
+            // Configure UI listeners
+            view.when(function () {
+                // Update map when floodLevelSlider changes
+                on(dom.byId("SLRLevelSlider"), "change", function () {
+                    highlightBuildings();
+                });
+
+                // Update map when buildingOpacitySlider changes
+                on(dom.byId("buildingOpacitySlider"), "change", function () {
+                    updateBuildingOpacity();
+                });
+
+                // Update map when waterOpacitySlider changes
+                on(dom.byId("waterOpacitySlider"), "change", function () {
+                    updateWaterOpacity();
+                });
+            });
+
+            // When the building layer has loaded
+            view.map.findLayerById("buildings").on("layerview-create", function(e){
+                // Update building renderer and transparency.
+                highlightBuildings();
+                updateBuildingOpacity();
+
+                // Set extent to entire building layer.
+                view.extent= e.layerView.layer.fullExtent;
+
+                // Animate the view to that it tilts over 2.5 seconds
+                view.goTo({
+                    tilt: 60
+                },{
+                    duration: 2500
+                });
+            });
+
+            // When the water layer has loaded
+            view.map.findLayerById("coast").on("layerview-create", function(e){
+                // Update water transparency
+                updateWaterOpacity();
+            });
+
+
+            // Add sea level rise menu and basemap toggle
+            var basemapToggle = new BasemapToggle({
+                view: view,           // view that provides access to the map's 'topo' basemap
+                nextBasemap: "hybrid" // allows for toggling to the 'hybrid' basemap
+            });
+            view.ui.add(basemapToggle,"top-right");
+            view.ui.add("menu", "bottom-left");
+
+            function highlightBuildings() {
+                //
+                var HIGHTLIGHTED = "#FF0000";
+                var NOT_HIGHTLIGHTED = "#FFFFFF";
+                // Slider value
+                var floodSliderValue = Number(dom.byId("SLRLevelSlider").value);
+
+                // Create the renderer and configure visual variables
+
+                view.map.findLayerById("buildings").renderer = new SimpleRenderer({
+                    symbol: new MeshSymbol3D(),
+                    visualVariables: [{
+                        // Set Opacity
+                        // specifies a visual variable of continuous color
+                        type: "color",
+                        field: "SLRLevel",
+                        // Color ramp from white to red buildings impacted by SLR will be
+                        // assigned a color proportional to the min and max colors specified below
+                        // Values for Sea LevelRise SliderSlider for Sea Level Rise
+                        // Slider for Sea Level Rise
+                        stops: [{
+                            value: null,
+                            color: NOT_HIGHTLIGHTED
+                        }, {
+                            value: 0,
+                            color: floodSliderValue >= 0 ? HIGHTLIGHTED : NOT_HIGHTLIGHTED
+                        },  {
+                            value: 1,
+                            color: floodSliderValue >= 1 ? HIGHTLIGHTED : NOT_HIGHTLIGHTED
+                        }, {
+                            value: 2,
+                            color: floodSliderValue >= 2 ? HIGHTLIGHTED : NOT_HIGHTLIGHTED
+                        }, {
+                            value: 3,
+                            color: floodSliderValue >= 3 ? HIGHTLIGHTED : NOT_HIGHTLIGHTED
+                        },  {
+                            value: 4,
+                            color: floodSliderValue >= 4 ? HIGHTLIGHTED : NOT_HIGHTLIGHTED
+                        }, {
+                            value: 5,
+                            color: floodSliderValue >= 5 ? HIGHTLIGHTED : NOT_HIGHTLIGHTED
+                        }, {
+                            value: 6,
+                            color: floodSliderValue >= 6 ? HIGHTLIGHTED : NOT_HIGHTLIGHTED
+                        }]
+                    }]
+                });
+
+                // Update FloodLayer
+                view.map.findLayerById("coast").layers.forEach(function (e, i) {
+                    e.opacity = i === floodSliderValue ? 1 : 0;
+                });
+
+                // Update UI
+                html.set(dom.byId("SLRSliderMessage"), "Sea Level Rise : " + floodSliderValue + "ft");
+            }
+
+            // Update water transparency
+            function updateWaterOpacity(){
+                var opacity = Number(dom.byId("waterOpacitySlider").value);
+                view.map.findLayerById("coast").opacity = opacity;
+                html.set(dom.byId("waterOpacityMessage"), "Water Opacity: " + opacity);
+            }
+
+            // Update building transparency
+            function updateBuildingOpacity(){
+                var opacity = Number(dom.byId("buildingOpacitySlider").value);
+                view.map.findLayerById("buildings").opacity = opacity;
+                html.set(dom.byId("buildingOpacityMessage"), "Building Opacity: " + opacity);
+            }
+        });
+    </script>
+</head>
+<body>
+    <div id="map"></div>
+    <div id="menu">
+        <div id="buildingOpacityMessage"></div>
+        <input id="buildingOpacitySlider" type="range" min="0.0" max="1.0" value="0.75" step="0.01" />
+        <div id="waterOpacityMessage"></div>
+        <input id="waterOpacitySlider" type="range" min="0.0" max="1.0" value="0.75" step="0.01" />
+        <div id="SLRSliderMessage"></div>
+        <input id="SLRLevelSlider" type="range" min="0" max="6" value="1" step="1" />
+    </div>
+</body>
+</html>

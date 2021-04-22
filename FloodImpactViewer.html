@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<!-- saved from url=(0060)https://gvanmaren.github.io/3D-Flood-Planning-App/index.html -->
+<html class="dj_webkit dj_chrome dj_contentbox"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        
+        <title>Flood Impact Viewer</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+        <style>
+                html,
+                body,
+                #map {
+                    padding: 0;
+                    margin: 0;
+                    height: 100%;
+                    width: 100%;
+                }
+                #menu {
+                    background-color: #ffffff;
+                    padding: 20px;
+                }
+                #message {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    font-size: 16px;
+                    font-weight: bold;
+                    text-align: center;
+                }
+                #environmentDiv {
+                    position: absolute;
+                    top: 12px;
+                    right: 12px;
+                    padding: 12px;
+                    background-color: rgba(0, 0, 0, 0.5);
+                    color: white;
+                }
+        </style>
+        <link rel="stylesheet" href="./Flood Impact Viewer_files/main.css">
+
+        <!-- configure Dojo -->
+        <script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/dojo_en-us.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/main.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/html.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/SceneView.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/SceneLayer.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/BasemapToggle.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/parser.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/SceneService.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/RangeInfo.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/SceneView_en-us.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/BasemapToggleViewModel.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/stamp.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/BasemapToggle.js(1).download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/IdentityManager.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/IdentityManager_en-us.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/TileLayerView3D.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/GroupLayerView.js.download"></script><script type="text/javascript" charset="utf-8" src="./Flood Impact Viewer_files/SmaaRenderPassData.js.download"></script><script type="text/javascript">
+            var package_path = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'));
+            var dojoConfig = {
+                async: true,
+                // load the api from a CDN and load local modules from the correct location.
+                packages: [{
+                    name: "application",
+                    location: package_path + '/js'
+                }, {
+                    name: "config",
+                    location: package_path + '/config'
+                }, {
+                    name: "arcgis_templates",
+                    location: package_path + '/..'
+                }]
+            };
+
+            // Have to handle a locale parameter before dojo is loaded
+            var urlLocale = location.search.match(/locale=([\w\-]+)/) ? RegExp.$1 : null;
+            if(urlLocale){
+                dojoConfig.locale = urlLocale;
+            }
+        </script>
+        <script src="./Flood Impact Viewer_files/saved_resource"></script>
+        <script type="text/javascript">
+            require(["application/main", "dojo/domReady!"], function (Main){
+                    // create an instance of main
+                    var myApp = new Main();
+
+                    // fire up the app
+                    myApp.init(); 
+            });
+        </script>
+    </head>
+
+    <!-- html elements for the page -->
+    <body>
+        <div id="map" class="esri-view esri-view-orientation-landscape esri-view-width-large esri-view-width-greater-than-xsmall esri-view-width-greater-than-small esri-view-width-greater-than-medium esri-view-width-less-than-xlarge esri-view-height-xsmall esri-view-height-less-than-small esri-view-height-less-than-medium esri-view-height-less-than-large esri-view-height-less-than-xlarge"><div class="esri-view-root"><div class="esri-view-surface esri-view-surface--inset-outline" role="application" tabindex="0" style="user-select: none; touch-action: none;" data-interacting="false"><canvas style="width: 100%; height:100%; display:block;" width="1198" height="510"></canvas></div><div class="esri-overlay-surface" style="user-select: none;"><div style="visibility: hidden;"></div></div><div class="esri-ui" style="top: 0px; left: 0px; right: 0px; bottom: 0px;"><div class="esri-ui-inner-container esri-ui-manual-container"><div class="esri-component esri-attribution esri-widget"><div class="esri-attribution__sources esri-interactive" tabindex="0" role="button">Source: USGS, NGA, NASA, CGIAR, GEBCO,N Robinson,NCEAS,NLS,OS,NMA,Geodatastyrelsen and the GIS User Community</div><div class="esri-attribution__powered-by">Powered by <a target="_blank" href="http://www.esri.com/" class="esri-attribution__link">Esri</a></div></div><div class="esri-component esri-popup" role="presentation" data-layer-title="Baltimore SLR - Buildings 3D NOAA SeaLevelRise Flooding" data-layer-id="buildings" style="top: 231px; left: 812px; bottom: auto; right: auto;"></div><div class="esri-component esri-spinner" style="left: 812px; top: 215px;"></div></div><div class="esri-ui-inner-container esri-ui-corner-container" style="top: 15px; left: 15px; right: 15px; bottom: 30px;"><div class="esri-ui-top-left esri-ui-corner"><div class="esri-component esri-zoom esri-widget"><div class="esri-widget-button esri-widget esri-interactive" role="button" tabindex="0" title="Zoom In"><span aria-hidden="true" role="presentation" class="esri-icon esri-icon-plus"></span><span class="esri-icon-font-fallback-text">Zoom In</span></div><div class="esri-widget-button esri-widget esri-interactive" role="button" tabindex="0" title="Zoom Out"><span aria-hidden="true" role="presentation" class="esri-icon esri-icon-minus"></span><span class="esri-icon-font-fallback-text">Zoom Out</span></div></div><div class="esri-component esri-navigation-toggle esri-widget" tabindex="0" aria-label="Toggle to pan or rotate in 3D" title="Toggle to pan or rotate in 3D"><div class="esri-navigation-toggle__button esri-widget-button esri-navigation-toggle__button--pan esri-navigation-toggle__button--active"><span class="esri-icon-pan"></span></div><div class="esri-navigation-toggle__button esri-widget-button esri-navigation-toggle__button--rotate"><span class="esri-icon-rotate"></span></div></div><div class="esri-component esri-compass esri-widget-button esri-widget esri-interactive" role="button" tabindex="0" aria-label="Reset compass orientation" title="Reset compass orientation"><span aria-hidden="true" class="esri-compass__icon esri-icon-compass" style="transform: rotateZ(-340.676deg);"></span><span class="esri-icon-font-fallback-text">Reset compass orientation</span></div></div><div class="esri-ui-top-right esri-ui-corner"></div><div class="esri-ui-bottom-left esri-ui-corner"><div id="menu" class="esri-component">
+            <div id="buildingOpacityMessage">Building Opacity: 1</div>
+            <input id="buildingOpacitySlider" type="range" min="0.0" max="1.0" value="1" step="0.01">
+            <div id="waterOpacityMessage">Water Opacity: 0.5</div>
+            <input id="waterOpacitySlider" type="range" min="0.0" max="1.0" value="0.5" step="0.01">
+            <div id="SLRSliderMessage">Sea Level Rise : 6ft</div>
+            <input id="SLRLevelSlider" type="range" min="0" max="6" value="1" step="1">
+        </div></div><div class="esri-ui-bottom-right esri-ui-corner"><div class="esri-component esri-basemap-toggle esri-widget" role="button" data-basemap-id="hybrid" tabindex="0" title="Toggle basemap"><div class="esri-basemap-thumbnail esri-basemap-toggle__container"><div class="esri-basemap-thumbnail__image esri-basemap-toggle__image" style="background-image: url(&quot;https://js.arcgis.com/4.7/esri/images/basemap/hybrid.jpg&quot;);"></div></div><div class="esri-basemap-thumbnail esri-basemap-toggle__container esri-basemap-toggle__image--secondary"><div class="esri-basemap-thumbnail__image esri-basemap-toggle__image" style="background-image: url(&quot;https://js.arcgis.com/4.7/esri/images/basemap/dark-gray.jpg&quot;);"></div></div></div></div></div></div></div><div class="esri-view-user-storage"></div></div>
+        
+        <div id="environmentDiv">
+            <table>
+              <tbody><tr>
+                <td>Time of day:</td>
+                <td>
+                  <select id="timeOfDaySelect">
+                    <option value="Sun Mar 15 2015 09:00:00 GMT-0500 (CET)">Morning</option>
+                    <option value="Sun Mar 15 2015 12:00:00 GMT-0500 (CET)">Noon</option>
+                    <option value="Sun Mar 15 2015 15:00:00 GMT-0500 (CET)">Afternoon</option>
+                    <option value="Sun Mar 15 2015 17:00:00 GMT-0500 (CET)">Evening</option>
+                  </select>
+                </td>
+              </tr>
+              <tr>
+                <td>Direct shadows:</td>
+                <td><input id="directShadowsInput" type="checkbox" checked="yes"></td>
+              </tr>
+            </tbody></table>
+          </div>
+    
+</body></html>
